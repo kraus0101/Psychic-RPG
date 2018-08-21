@@ -22,8 +22,8 @@ GameObject:
   - component: {fileID: 20954292284180728}
   - component: {fileID: 124294710794854186}
   - component: {fileID: 81125584097239846}
-  - component: {fileID: 114228915353129426}
   - component: {fileID: 114092624596229814}
+  - component: {fileID: 114228915353129426}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114776091008811012}
   m_Layer: 0
   m_Name: Camera Arm
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -141,6 +141,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469d1a01ae92544039d8995893d41c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkCursor: {fileID: 2800000, guid: dc42fa46a53604b90bd9f85ceae396a5, type: 3}
+  unknownCursor: {fileID: 2800000, guid: 3c5006fe4505447a699dea018b826c7c, type: 3}
+  targetCursor: {fileID: 2800000, guid: b2a65290f359c492d8da4f749357dcb6, type: 3}
+  cursorHotspot: {x: 32, y: 32}
 --- !u!114 &114776091008811012
 MonoBehaviour:
   m_ObjectHideFlags: 1
