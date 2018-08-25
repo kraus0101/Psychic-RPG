@@ -6,9 +6,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class PlayerMovement : MonoBehaviour
 {
 
-    //todo fix isuue with click to move and WASD Conflicting and increase speed
-
-    ThirdPersonCharacter m_Character;   // A reference to the ThirdPersonCharacter on the object
+    ThirdPersonCharacter thirdPersonCharacter;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
     Vector3 currentClickTarget;
     [SerializeField] float walkMoveStopRadius = 0.2f;
@@ -18,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
-        m_Character = GetComponent<ThirdPersonCharacter>();
+        thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
         currentClickTarget = transform.position;
     }
 
@@ -29,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))//G for gamepad, Todo add to menu later
         {
             isIndirectMode = !isIndirectMode; //toggle mode
+            currentClickTarget = transform.position;
         }
 
         if (isIndirectMode)
@@ -38,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
 
         else
         {
-            ProcessMouseMovement();
+            ProcessMouseMovement();  
         }    
     }
 
@@ -46,14 +45,14 @@ public class PlayerMovement : MonoBehaviour
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        bool m_Jump = Input.GetButtonDown("Jump");
-        bool crouch = Input.GetKey(KeyCode.C);
+        bool jump = Input.GetButtonDown("Jump");
+        bool crouch = Input.GetKey(KeyCode.C); // TODO confirm later if it has bug problem. if it has, go for standard asset script in evernote.
 
         //calculate camera relative direction to move
-        Vector3 m_CamForward= Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 m_Move = v * m_CamForward + h * Camera.main.transform.right;
+        Vector3 cameraForward= Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 movement = v * cameraForward + h * Camera.main.transform.right;
 
-        m_Character.Move(m_Move, crouch, m_Jump);
+        thirdPersonCharacter.Move(movement, crouch, jump);
 
     }
 
@@ -61,8 +60,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            print("Cursor raycast hit layer: " + cameraRaycaster.layerHit);
-            switch (cameraRaycaster.layerHit)
+            print("Cursor raycast hit layer: " + cameraRaycaster.currentLayerHit);
+            switch (cameraRaycaster.currentLayerHit)
             {
                 case Layer.Walkable:
                     currentClickTarget = cameraRaycaster.hit.point;
@@ -78,11 +77,11 @@ public class PlayerMovement : MonoBehaviour
         var playerToClickPoint = currentClickTarget - transform.position;
         if (playerToClickPoint.magnitude >= walkMoveStopRadius)
         {
-            m_Character.Move(playerToClickPoint, false, false);
+            thirdPersonCharacter.Move(playerToClickPoint, false, false);
         }
         else
         {
-            m_Character.Move(Vector3.zero, false, false);
+            thirdPersonCharacter.Move(Vector3.zero, false, false);
         }
     }
 }

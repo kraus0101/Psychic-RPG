@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof (CameraRaycaster))]
 public class CursorAffordance: MonoBehaviour {
 
     [SerializeField] Texture2D walkCursor = null;
     [SerializeField] Texture2D unknownCursor = null;
     [SerializeField] Texture2D targetCursor = null;
 
-    [SerializeField] Vector2 cursorHotspot = new Vector2(32, 32);
+    [SerializeField] Vector2 cursorHotspot = new Vector2(0,0);
 
     CameraRaycaster cameraRaycaster;
   
@@ -16,12 +17,13 @@ public class CursorAffordance: MonoBehaviour {
 	void Start () 
     {
         cameraRaycaster = GetComponent<CameraRaycaster>();
+        cameraRaycaster.layerChangeObservers += OnDelegateCalled; // Registering
 	}
 	
-	// Update is called once per frame
-	void LateUpdate () 
+    void OnDelegateCalled() 
     {
-        switch (cameraRaycaster.layerHit)
+        print("Cursor is changed when layer is changed");
+        switch (cameraRaycaster.currentLayerHit)
         {
             case Layer.Walkable:
                 Cursor.SetCursor(walkCursor, cursorHotspot, CursorMode.Auto);
