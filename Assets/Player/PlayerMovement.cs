@@ -8,8 +8,10 @@ public class PlayerMovement : MonoBehaviour
 
     ThirdPersonCharacter thirdPersonCharacter;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
-    Vector3 currentClickTarget;
-    [SerializeField] float walkMoveStopRadius = 0.2f;
+    Vector3 clickToDestination, clickPoint;
+
+    [SerializeField] float walkMoveStopRadius = 0.5f;
+    [SerializeField] float attackMoveStopRadius = 3f;
 
     bool isIndirectMode = false;
         
@@ -17,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
         thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
-        currentClickTarget = transform.position;
+        clickToDestination = transform.position;
     }
 
 
@@ -27,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))//G for gamepad, Todo add to menu later
         {
             isIndirectMode = !isIndirectMode; //toggle mode
-            currentClickTarget = transform.position;
+            clickToDestination = transform.position;
         }
 
         if (isIndirectMode)
@@ -60,22 +62,27 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            print("Cursor raycast hit layer: " + cameraRaycaster.currentLayerHit);
+            clickPoint = cameraRaycaster.hit.point;
             switch (cameraRaycaster.currentLayerHit)
             {
                 case Layer.Walkable:
-                    currentClickTarget = cameraRaycaster.hit.point;
+                    clickToDestination = ShortDestination(clickPoint, walkMoveStopRadius);
                     break;
                 case Layer.Enemy:
-                    print("Not moving to enemy");
+                    clickToDestination = ShortDestination(clickPoint, attackMoveStopRadius);
                     break;
                 default:
                     print("Unexpected layer found");
                     return;
             }
         }
-        var playerToClickPoint = currentClickTarget - transform.position;
-        if (playerToClickPoint.magnitude >= walkMoveStopRadius)
+        WalkToDestination();
+    }
+
+    private void WalkToDestination()
+    {
+        var playerToClickPoint = clickToDestination - transform.position;
+        if (playerToClickPoint.magnitude >= 0)
         {
             thirdPersonCharacter.Move(playerToClickPoint, false, false);
         }
@@ -83,6 +90,25 @@ public class PlayerMovement : MonoBehaviour
         {
             thirdPersonCharacter.Move(Vector3.zero, false, false);
         }
+    }
+
+    private Vector3 ShortDestination(Vector3 destination, float shortening)
+    {
+        Vector3 reductionVector = (destination - transform.position).normalized * shortening;
+        return destination - reductionVector;
+    }
+
+    private void OnDrawGizmos()
+    {
+        //Drwa movement gizmo
+        Gizmos.color = Color.black;
+        Gizmos.DrawLine(transform.position, clickToDestination);
+        Gizmos.DrawSphere(clickToDestination, 0.2f);
+        Gizmos.DrawSphere(clickPoint,0.1f);
+
+        //Draw attack sphere 
+        Gizmos.color = new Color(255f, 0f, 0f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, attackMoveStopRadius);
     }
 }
 
