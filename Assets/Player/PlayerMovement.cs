@@ -77,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         WalkToDestination();
+        OnDrawGizmos();
     }
 
     private void WalkToDestination()
@@ -99,12 +100,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    {
-        //Drwa movement gizmo
+    {   //Drwa movement gizmo
         Gizmos.color = Color.black;
         Gizmos.DrawLine(transform.position, clickToDestination);
         Gizmos.DrawSphere(clickToDestination, 0.2f);
-        Gizmos.DrawSphere(clickPoint,0.1f);
+        Gizmos.DrawSphere(clickPoint, 0.1f);
 
         //Draw attack sphere 
         Gizmos.color = new Color(255f, 0f, 0f, 0.5f);

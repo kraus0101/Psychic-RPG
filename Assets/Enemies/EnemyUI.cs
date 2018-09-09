@@ -16,13 +16,13 @@ public class EnemyUI : MonoBehaviour {
     void Start()
     {
         cameraToLookAt = Camera.main;
-        Instantiate(enemyCanvasPrefab, transform.position, Quaternion.identity, transform);
+        Instantiate(enemyCanvasPrefab, transform.position, transform.rotation, transform);
     }
 
     // Update is called once per frame 
     void LateUpdate()
     {
         transform.LookAt(cameraToLookAt.transform);
-        //transform.rotation = Quaternion.LookRotation(cameraToLookAt.transform.forward); //makes enemy health bar tilt
+        transform.rotation = Quaternion.LookRotation(cameraToLookAt.transform.forward); //makes enemy health bar tilt
     }
 }
